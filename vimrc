@@ -1,42 +1,53 @@
 set nocompatible               " be iMproved
 filetype off                   " required!       /**  从这行开始，vimrc配置 **/
 
-set rtp+=~/.vim/bundle/vundle/
-call vundle#rc()
+" Specify a directory for plugins
+" - For Neovim: ~/.local/share/nvim/plugged
+" - Avoid using standard Vim directory names like 'plugin'
+call plug#begin('~/.vim/plugged')
 
-" let Vundle manage Vundle
-" required! 
-Bundle 'gmarik/vundle'
+" Make sure you use single quotes
 
-Bundle 'taglist.vim'
-Bundle 'tagbar'
-Bundle 'OmniCppComplete'
-Bundle 'autoload_cscope.vim'
+" Shorthand notation; fetches https://github.com/junegunn/vim-easy-align
+Plug 'junegunn/vim-easy-align'
 
-" My Bundles here:  /* 插件配置格式 */
-"   
-" original repos on github （Github网站上非vim-scripts仓库的插件，按下面格式填写）
-Bundle 'tpope/vim-fugitive'
-Bundle 'Lokaltog/vim-easymotion'
-Bundle 'rstacruz/sparkup', {'rtp': 'vim/'}
-Bundle 'tpope/vim-rails.git'
-" vim-scripts repos  （vim-scripts仓库里的，按下面格式填写）
-Bundle 'L9'
-Bundle 'FuzzyFinder'
-" non github repos   (非上面两种情况的，按下面格式填写)
-Bundle 'git://git.wincent.com/command-t.git'
-" ... 
+" Any valid git URL is allowed
+Plug 'https://github.com/junegunn/vim-github-dashboard.git'
 
-filetype plugin indent on     " required!   /** vimrc文件配置结束 **/
-"                                           /** vundle命令 **/
-" Brief help
-" :BundleList          - list configured bundles
-" :BundleInstall(!)    - install(update) bundles
-" :BundleSearch(!) foo - search(or refresh cache first) for foo 
-" :BundleClean(!)      - confirm(or auto-approve) removal of unused bundles
-"   
-" see :h vundle for more details or wiki for FAQ 
-" NOTE: comments after Bundle command are not allowed..
+" Multiple Plug commands can be written in a single line using | separators
+Plug 'SirVer/ultisnips' | Plug 'honza/vim-snippets'
+
+" On-demand loading
+Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
+Plug 'tpope/vim-fireplace', { 'for': 'clojure' }
+
+" Using a non-master branch
+Plug 'rdnetto/YCM-Generator', { 'branch': 'stable' }
+
+" Using a tagged release; wildcard allowed (requires git 1.9.2 or above)
+Plug 'fatih/vim-go', { 'tag': '*' }
+
+" Plugin options
+Plug 'nsf/gocode', { 'tag': 'v.20150303', 'rtp': 'vim' }
+
+" Plugin outside ~/.vim/plugged with post-update hook
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+
+" Unmanaged plugin (manually installed and updated)
+Plug '~/my-prototype-plugin'
+
+" My priv plugin
+Plug 'vim-scripts/taglist.vim'
+Plug 'vim-scripts/tagbar'
+Plug 'vim-scripts/OmniCppComplete'
+Plug 'vim-scripts/autoload_cscope.vim'
+Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
+Plug 'vim-airline/vim-airline'
+Plug 'vim-scripts/winmanager'
+Plug 'vim-scripts/bufexplorer.zip'
+
+" Initialize plugin system
+call plug#end()
 
 
 " ******************************************************
@@ -55,7 +66,12 @@ set viminfo='20,\"50	" read/write a .viminfo file, don't store more
 set history=50		" keep 50 lines of command line history
 set ruler		" show the cursor position all the time
 
+" 设置TAB属性
+set tabstop=4
+set softtabstop=4
+set shiftwidth=4
 set autoindent
+
 set incsearch
 set number
 " ctags
@@ -73,12 +89,47 @@ if has("gui_running")
   set columns=100
   highlight CursorLine term=underline cterm=underline guibg=Grey10 "在文件末尾添加才有效
 endif
-"set guifont=Monospace\ 11 "在字体名后的反斜杠下加个空格，再加字体大小
+set guifont=Monospace\ 11 "在字体名后的反斜杠下加个空格，再加字体大小
 "set lines=30
 "set columns=100
 "highlight CursorLine term=underline cterm=underline guibg=Grey10 "在文件末尾添加才有效
 set cursorline
 ":autocmd  BufEnter  *  call  DoWordComplete()	"word_complete
+
+" airline配置
+" 总是显示状态栏 
+let laststatus = 2
+let g:airline_powerline_fonts = 1   " 使用powerline打过补丁的字体
+let g:airline_theme="dark"      " 设置主题
+" 开启tabline
+let g:airline#extensions#tabline#enabled = 1      "tabline中当前buffer两端的分隔字符
+let g:airline#extensions#tabline#left_sep = ' '   "tabline中未激活buffer两端的分隔字符
+let g:airline#extensions#tabline#left_alt_sep = '|'      "tabline中buffer显示编号
+let g:airline#extensions#tabline#buffer_nr_show = 1
+
+" Winmanager配置
+let g:NERDTree_title="[NERDTree]"
+let g:winManagerWindowLayout="FileExplorer,BufExplorer|TagList"
+function! NERDTree_Start()
+	exec 'NERDTree'
+endfunction
+
+function! NERDTree_IsValid()
+	return 1
+endfunction
+
+"设置winmanager的宽度，默认为25
+let g:winManagerWidth = 30
+"定义打开关闭winmanager按键
+nmap <silent> <F8> :WMToggle<cr>
+
+" Taglist设置
+" 不同是显示多个文件的tag,只显示当前文件的
+let Tlist_Show_One_File=1
+" 如果taglist窗口是最后一个窗口，则退出vim
+let Tlist_Exit_OnlyWindow=1
+" 让当前不被编辑的文件的方法列表自动折叠起来
+let Tlist_File_Fold_Auto_Close=1
 
 "mniCppComplete
 let OmniCpp_NamespaceSearch = 1
